@@ -4,9 +4,12 @@ package com.example.android.sunshine.app.ui;
  * Created by Jayson Dela Cruz on 7/15/2016.
  */
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -16,9 +19,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.android.sunshine.app.DetailActivity;
 import com.example.android.sunshine.app.R;
 
 import org.json.JSONArray;
@@ -51,6 +56,12 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
     }
@@ -60,13 +71,21 @@ public class ForecastFragment extends Fragment {
         // Handle menu events here
         int id = item.getItemId();
         if (id == R.id.action_refresh){
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("94043");
-
+            updateWeather();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateWeather(){
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+
+        // Retrieve user preference location
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String zipcode = sharedPref.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        weatherTask.execute(zipcode);
     }
 
     @Override
@@ -74,25 +93,33 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // Create fake data array
-        ArrayList<String> weekForecast = new ArrayList<String>();
-
-        weekForecast.add("Today - Sunny - 88/63");
-        weekForecast.add("Tomorrow - SFoggy - 70/46");
-        weekForecast.add("Weds - Cloudy - 72/63");
-        weekForecast.add("Thurs - Asteroids - 75/65");
-
         // Create adapter
         mForecastAdapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                weekForecast
+                new ArrayList<String>()
         );
 
         // Find list view
-        ListView mForecast = (ListView) rootView.findViewById(R.id.list_view_forecast);
+        final ListView mForecast = (ListView) rootView.findViewById(R.id.list_view_forecast);
         // Assign custom adapter
         mForecast.setAdapter(mForecastAdapter);
+        // Assign a clicklistener
+        mForecast.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Display a toast displaying the weather info
+                String weatherData;
+                // Get data from adapter at position
+                weatherData = mForecastAdapter.getItem(position);
+
+                // Launch detail activity
+                Intent openDetails = new Intent(getActivity(), DetailActivity.class);
+                openDetails.putExtra(Intent.EXTRA_TEXT, weatherData);
+                startActivity(openDetails);
+
+            }
+        });
 
         return rootView;
     }
@@ -234,8 +261,27 @@ public class ForecastFragment extends Fragment {
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
 
-            String highLowStr = roundedHigh + "/" + roundedLow;
+            long roundedHighImperial = Math.round((high*1.8)+32);
+            long roundedLowImperial = Math.round((low*1.8)+32);
+
+            // Retrieve user preference location
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String units = sharedPref.getString(getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_default));
+
+            // Entry value for Imperial units
+            String imperial = getResources().getStringArray(R.array.pref_units_entries)[0];
+
+            String highLowStr;
+            // If imperial
+            if(units.equals(imperial)) {
+                highLowStr = roundedHighImperial + "/" + roundedLowImperial;
+            }else{
+                highLowStr = roundedHigh + "/" + roundedLow;
+            }
             return highLowStr;
+
+
         }
 
         /**

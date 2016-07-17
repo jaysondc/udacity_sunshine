@@ -1,11 +1,15 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.sunshine.app.ui.ForecastFragment;
+import com.example.android.sunshine.app.ui.SettingsActivity;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -19,6 +23,10 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new ForecastFragment())
                     .commit();
         }
+
+        // Initialize settings to default values
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+
     }
 
     @Override
@@ -37,9 +45,25 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent openSettings = new Intent(this, SettingsActivity.class);
+            startActivity(openSettings);
             return true;
+        }
+        if (id == R.id.action_open_map){
+            // Build map intent
+            Intent openMap = new Intent(Intent.ACTION_VIEW);
+            Uri mapInfo = Uri.p;
+            // Pass in preferred location preference
+
+            // Check if a maps app is installed
+
+            // Launch intent
+
+
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
