@@ -83,9 +83,9 @@ public class ForecastFragment extends Fragment {
 
         // Retrieve user preference location
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String zipcode = sharedPref.getString(getString(R.string.pref_location_key),
+        String location = sharedPref.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
-        weatherTask.execute(zipcode);
+        weatherTask.execute(location);
     }
 
     @Override

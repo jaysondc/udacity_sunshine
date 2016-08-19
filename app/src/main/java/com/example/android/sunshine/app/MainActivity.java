@@ -1,10 +1,12 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -33,6 +35,10 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        MenuItem share = menu.findItem(R.id.share);
+        ShareActionProvider mShareActionProvider = (ShareActionProvider) share.getActionProvider();
+
         return true;
     }
 
@@ -52,14 +58,23 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_open_map){
             // Build map intent
             Intent openMap = new Intent(Intent.ACTION_VIEW);
-            Uri mapInfo = Uri.p;
-            // Pass in preferred location preference
 
-            // Check if a maps app is installed
+            // Get user preference location
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String location = sharedPref.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
 
-            // Launch intent
+            // Built location uri
+            Uri mapInfo = Uri.parse("geo:0,0?").buildUpon()
+                    .appendQueryParameter("q", location)
+                    .build();
 
+            openMap.setData(mapInfo);
 
+            // Check if a maps app is installed and launch intent
+            if(openMap.resolveActivity(getPackageManager()) != null){
+                startActivity(openMap);
+            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -2,9 +2,11 @@
 
     <EditTextPreference
         android:defaultValue="@string/pref_location_default"
+        android:inputType="text"
         android:key="@string/pref_location_key"
-        android:title="@string/pref_location_header"
-        android:summary="@string/pref_location_summary" />
+        android:singleLine="true"
+        android:summary="@string/pref_location_summary"
+        android:title="@string/pref_location_header" />
 
     <ListPreference
         android:defaultValue="@string/pref_units_default"
