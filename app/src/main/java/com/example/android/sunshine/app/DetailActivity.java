@@ -2,7 +2,10 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +16,10 @@ import android.widget.TextView;
 import com.example.android.sunshine.app.ui.SettingsActivity;
 
 public class DetailActivity extends ActionBarActivity {
+
+    private ShareActionProvider mShareActionProvider;
+    private String mShareString;
+    final private String LOG_TAG = "Detail Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +36,32 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.detailfragment, menu);
+
+        MenuItem share = menu.findItem(R.id.share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(share);
+
+        if(mShareActionProvider != null){
+            Intent shareIntent = createShareForecastIntent(mShareString);
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+        else{
+            Log.d(LOG_TAG, "Share Action Provider is null for some reason.");
+        }
         return true;
+    }
+
+    private Intent createShareForecastIntent(String shareString){
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                shareString);
+        return shareIntent;
+    }
+
+    public void setShareString(String string){
+        mShareString = string;
     }
 
     @Override
@@ -73,6 +104,8 @@ public class DetailActivity extends ActionBarActivity {
             TextView mDetailText = (TextView) getActivity().findViewById(R.id.detail_text);
             // Assign views
             mDetailText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            // Set text to be usable in the activity level
+            ((DetailActivity) getActivity()).setShareString(intent.getStringExtra(Intent.EXTRA_TEXT));
             return super.onCreateView(inflater, container, savedInstanceState);
         }
     }
