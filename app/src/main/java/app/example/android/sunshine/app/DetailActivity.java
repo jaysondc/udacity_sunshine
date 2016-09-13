@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package app.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.sunshine.app.ui.SettingsActivity;
+import com.example.android.sunshine.app.R;
+
+import app.example.android.sunshine.app.ui.SettingsActivity;
 
 public class DetailActivity extends ActionBarActivity {
 

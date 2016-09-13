@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app;
+package app.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,8 +9,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.android.sunshine.app.ui.ForecastFragment;
-import com.example.android.sunshine.app.ui.SettingsActivity;
+import com.example.android.sunshine.app.R;
+
+import app.example.android.sunshine.app.ui.ForecastFragment;
+import app.example.android.sunshine.app.ui.SettingsActivity;
 
 
 public class MainActivity extends ActionBarActivity {

@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app.classes;
+package app.example.android.sunshine.app.classes;
 
 import org.json.JSONArray;
 import org.json.JSONException;

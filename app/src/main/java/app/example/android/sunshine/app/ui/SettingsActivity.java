@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app.ui;
+package app.example.android.sunshine.app.ui;
 
 import android.os.Bundle;
 import android.preference.ListPreference;

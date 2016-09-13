@@ -1,4 +1,4 @@
-package com.example.android.sunshine.app.ui;
+package app.example.android.sunshine.app.ui;
 
 /**
  * Created by Jayson Dela Cruz on 7/15/2016.
@@ -23,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.android.sunshine.app.DetailActivity;
 import com.example.android.sunshine.app.R;
 
 import org.json.JSONArray;
@@ -39,6 +38,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import app.example.android.sunshine.app.DetailActivity;
 
 public class ForecastFragment extends Fragment {
 
