@@ -89,6 +89,7 @@ public class DetailActivity extends ActionBarActivity {
     /********************* FRAGMENT ***************************************/
 
     public static class DetailFragment extends android.support.v4.app.Fragment{
+        String mForecastStr;
 
         public DetailFragment(){
         }
@@ -105,7 +106,10 @@ public class DetailActivity extends ActionBarActivity {
             // Find views
             TextView mDetailText = (TextView) getActivity().findViewById(R.id.detail_text);
             // Assign views
-            mDetailText.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            if (intent != null) {
+                mForecastStr = intent.getDataString();
+            }
+            mDetailText.setText(mForecastStr);
             // Set text to be usable in the activity level
             ((DetailActivity) getActivity()).setShareString(intent.getStringExtra(Intent.EXTRA_TEXT));
             return super.onCreateView(inflater, container, savedInstanceState);

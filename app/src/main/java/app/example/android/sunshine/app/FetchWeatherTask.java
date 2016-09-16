@@ -47,7 +47,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     private final Context mContext;
 
-    public FetchWeatherTask(Context context, ForecastAdapter forecastAdapter) {
+    public FetchWeatherTask(Context context) {
         mContext = context;
     }
 
