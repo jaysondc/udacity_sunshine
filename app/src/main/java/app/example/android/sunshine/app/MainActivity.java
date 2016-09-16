@@ -17,18 +17,23 @@ import app.example.android.sunshine.app.ui.SettingsActivity;
 
 public class MainActivity extends ActionBarActivity {
 
+    private String mLocation;
+    private String FORECASTFRAGMENT_TAG = "ForecastFragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
 
         // Initialize settings to default values
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+
+        mLocation = Utility.getPreferredLocation(this);
 
     }
 
@@ -78,5 +83,18 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
 
+        // Check if location has changed
+        if(mLocation != Utility.getPreferredLocation(this)){
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            // Have forecast fragment reset
+            ff.onLocationChanged();
+            // Update local location
+            mLocation = Utility.getPreferredLocation(this);
+        }
+
+        super.onResume();
+    }
 }
