@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -38,6 +39,8 @@ public class DetailFragment extends android.support.v4.app.Fragment implements L
     private TextView mFriendlyDateView, mDateView, mHumidityView, mWindView, mPressureView, mHighTempView,
         mLowTempView, mDescriptionView;
     private ImageView mIconView;
+    static final String DETAIL_URI = "URI";
+    private Uri mUri;
 
     private static final String[] DETAIL_COLUMNS = {
                     WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
@@ -69,17 +72,24 @@ public class DetailFragment extends android.support.v4.app.Fragment implements L
     public static final int COL_WEATHER_CONDITION_ID = 9;
 
     public DetailFragment(){
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        // This was missing from the class but it gets the URI passed from the intent.
+        if (getActivity().getIntent().getData() != null){
+            mUri = getActivity().getIntent().getData();
+        }
+
+        // Restore arguments if they exist
+        Bundle arguments = getArguments();
+        if(arguments != null){
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
+
         // Inflate detail view
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -93,10 +103,19 @@ public class DetailFragment extends android.support.v4.app.Fragment implements L
         mHighTempView = (TextView) view.findViewById(R.id.detail_temp_high);
         mLowTempView = (TextView) view.findViewById(R.id.detail_temp_low);
 
-        // Initialize loader
-        getLoaderManager().initLoader(FORECAST_DETAIL_LOADER, null, this);
-
         return view;
+    }
+
+    void onLocationChanged( String newLocation){
+        // replace the uri and restart the loader if the location has changed
+        Uri uri = mUri;
+        if (uri != null){
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                    newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(FORECAST_DETAIL_LOADER, null, this);
+        }
     }
 
     @Override
@@ -125,6 +144,14 @@ public class DetailFragment extends android.support.v4.app.Fragment implements L
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        // Initialize loader
+        getLoaderManager().initLoader(FORECAST_DETAIL_LOADER, null, this);
+
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -143,19 +170,17 @@ public class DetailFragment extends android.support.v4.app.Fragment implements L
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        // Get URI passed from Intent
-        Intent intent = getActivity().getIntent();
-        if (intent != null) {
-            mDayForecastUri = intent.getData();
+        if(mUri != null) {
+            // Create the cursor loader using the member URI
+            return new CursorLoader(
+                    getActivity(),
+                    mUri,
+                    DETAIL_COLUMNS,
+                    null,
+                    null,
+                    null);
         }
-
-        return new CursorLoader(getActivity(),
-                mDayForecastUri,
-                DETAIL_COLUMNS,
-                null,
-                null,
-                null);
+        return null;
     }
 
     @Override
@@ -171,7 +196,9 @@ public class DetailFragment extends android.support.v4.app.Fragment implements L
         mFriendlyDateView.setText(friendlyDateText);
         mDateView.setText(dateText);
 
+        // Icon
         int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
+        mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 
         // Description
         mDescriptionView.setText(data.getString(COL_WEATHER_DESC));

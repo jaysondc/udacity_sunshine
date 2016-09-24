@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:paddingRight="16dp"
+    android:background="@drawable/touch_selector">
 
     <ImageView
         android:id="@+id/list_item_icon"
@@ -14,7 +15,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:contentDescription="Forecast image."
-        android:src="@drawable/ic_launcher"/>
+        tools:src="@drawable/ic_launcher"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

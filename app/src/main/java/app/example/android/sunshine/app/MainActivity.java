@@ -15,20 +15,36 @@ import app.example.android.sunshine.app.ui.ForecastFragment;
 import app.example.android.sunshine.app.ui.SettingsActivity;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback{
 
     private String mLocation;
-    private String FORECASTFRAGMENT_TAG = "ForecastFragment";
+    private boolean mTwoPane;
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
+
+        if(findViewById(R.id.weather_detail_container) != null){
+            // This container will only be present on large sw600dp layouts
+            mTwoPane = true;
+
+            // In two-pane mode, show the detail view in this activity
+            // by adding or replacing the detail fragment using a
+            // fragment transaction
+            if(savedInstanceState == null){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
         }
+        // Tell the forecast fragment, wherever it is, to use the one or two pane layout
+        ForecastFragment forecastFragment = ((ForecastFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast));
+        forecastFragment.setUseTodayLayout(!mTwoPane);
 
         // Initialize settings to default values
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
@@ -83,18 +99,49 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     protected void onResume() {
-
-        // Check if location has changed
-        if(mLocation != Utility.getPreferredLocation(this)){
-            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
-            // Have forecast fragment reset
-            ff.onLocationChanged();
-            // Update local location
-            mLocation = Utility.getPreferredLocation(this);
-        }
-
         super.onResume();
+        String location = Utility.getPreferredLocation(this);
+        // If the location has changed while we were away
+        if (location != null && !location.equals(mLocation)){
+            // Refresh forecast fragment
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_forecast);
+            if ( ff != null) {
+                ff.onLocationChanged();
+            }
+
+            // Refresh detail fragment
+            DetailFragment df = (DetailFragment) getSupportFragmentManager()
+                    .findFragmentByTag(DETAILFRAGMENT_TAG);
+            if ( df != null){
+                df.onLocationChanged(location);
+            }
+            mLocation = location;
+        }
+    }
+
+    @Override
+    public void onItemSelected(Uri contentUri) {
+        // Do stuff when an item is selected
+        if (mTwoPane){
+            // Launch detail fragment inside the second pane using a fragment transaction
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
+
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
+                    .commit();
+        } else {
+            // Launch detail activity normally
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(contentUri);
+            startActivity(intent);
+        }
     }
 }

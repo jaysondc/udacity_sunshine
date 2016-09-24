@@ -4,7 +4,7 @@ package app.example.android.sunshine.app.ui;
  * Created by Jayson Dela Cruz on 7/15/2016.
  */
 
-import android.content.Intent;
+import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +23,6 @@ import android.widget.ListView;
 
 import com.example.android.sunshine.app.R;
 
-import app.example.android.sunshine.app.DetailActivity;
 import app.example.android.sunshine.app.FetchWeatherTask;
 import app.example.android.sunshine.app.ForecastAdapter;
 import app.example.android.sunshine.app.Utility;
@@ -34,6 +33,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private static final int FORECAST_LOADER = 0;
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private ForecastAdapter mForecastAdapter;
+    private Callback mCallback; // Callback for sending items back to parent activity
+    private String SELECTED_KEY = "SELECTED STATE";
+    private int mPosition;
+    private ListView mListView;
+    private boolean mUseTodayLayout;
 
     public static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -115,34 +119,84 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.list_view_forecast);
-        listView.setAdapter(mForecastAdapter);
+        mListView = (ListView) rootView.findViewById(R.id.list_view_forecast);
+        mListView.setAdapter(mForecastAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+
+                // Pass URI to parent activity
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                    mCallback.onItemSelected(WeatherContract.WeatherEntry
+                            .buildWeatherLocationWithDate(
                                     locationSetting, cursor.getLong(COL_WEATHER_DATE)
                             ));
-                    startActivity(intent);
                 }
+                // Save selected position to instance bundle
+                mPosition = position;
             }
         });
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)){
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+        // Specify whether we should use special "Today Layout" based on parent activity
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+
         return rootView;
+    }
+
+    public void setUseTodayLayout(boolean UseTodayLayout) {
+        // Upon being called by activity, set the useTodayLayout variable
+        // If the ForecastAdapter has already been assigned, set using it's set method
+        mUseTodayLayout = UseTodayLayout;
+        if(mForecastAdapter != null){
+            mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try{
+            // Get an reference to the callback method in the parent activity.
+            // Use it to pass the URI of the selected forecast.
+            mCallback = (Callback) activity;
+        } catch (ClassCastException e){
+            throw new ClassCastException(activity.toString()
+                    + " must implement Callback");
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SELECTED_KEY, mPosition);
     }
 
     @Override
@@ -166,6 +220,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mForecastAdapter.swapCursor(cursor);
+        if (mPosition != ListView.INVALID_POSITION){
+            mListView.setSelection(mPosition);
+        }
     }
 
     @Override

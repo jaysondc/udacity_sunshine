@@ -25,6 +25,8 @@ public class ForecastAdapter extends CursorAdapter {
 
     private final int VIEW_TYPE_TODAY = 0;
     private final int VIEW_TYPE_FUTURE_DAY = 1;
+    // flag to determine if we want to use a separate view for "today"
+    private boolean mUseTodayLayout = true;
 
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -57,7 +59,11 @@ public class ForecastAdapter extends CursorAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+        return (position == 0 && mUseTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout){
+        mUseTodayLayout = useTodayLayout;
     }
 
     @Override
@@ -99,6 +105,16 @@ public class ForecastAdapter extends CursorAdapter {
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
+        // Draw weather icon
+        int weatherCondId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        int viewType = getItemViewType(cursor.getPosition());
+        int resWeatherIcon;
+        if(viewType == VIEW_TYPE_TODAY){
+            resWeatherIcon = Utility.getArtResourceForWeatherCondition(weatherCondId);
+        } else {
+            resWeatherIcon = Utility.getIconResourceForWeatherCondition(weatherCondId);
+        }
+
         date = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         forecast = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
         high = Utility.formatTemperature(
@@ -110,6 +126,7 @@ public class ForecastAdapter extends CursorAdapter {
                 cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP),
                 Utility.isMetric(context));
 
+        viewHolder.iconView.setImageResource(resWeatherIcon);
         viewHolder.dateView.setText(Utility.getFriendlyDayString(context, date));
         viewHolder.descriptionView.setText(forecast);
         viewHolder.highTempView.setText(high);
