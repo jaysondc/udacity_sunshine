@@ -3,17 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="16dp"
+    xmlns:style="http://schemas.android.com/apk/res-auto"
     android:paddingRight="16dp"
     android:background="@drawable/touch_selector">
 
     <ImageView
         android:id="@+id/list_item_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="16dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginLeft="14dp"
         android:layout_marginTop="8dp"
+        android:layout_centerVertical="true"
         android:contentDescription="Forecast image."
         tools:src="@drawable/ic_launcher"/>
 
@@ -31,6 +32,9 @@
             android:layout_height="0dp"
             android:layout_weight=".5"
             android:gravity="left|center"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textSize="20sp"
             tools:text="Today"
             />
 
@@ -40,6 +44,8 @@
             android:layout_height="0dp"
             android:layout_weight=".5"
             android:gravity="left|center"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceSmall"
             tools:text="Sunny"
             />
     </LinearLayout>
@@ -58,6 +64,8 @@
             android:layout_height="0dp"
             android:layout_weight=".5"
             android:gravity="right|center"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
             tools:text="21*"
             />
 
@@ -67,6 +75,8 @@
             android:layout_height="0dp"
             android:layout_weight=".5"
             android:gravity="right|center"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceSmall"
             tools:text="8*"
             />
     </LinearLayout>

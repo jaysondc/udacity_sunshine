@@ -5,6 +5,7 @@
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/sunshine_blue</item>
         <item name="colorPrimaryDark">@color/sunshine_dark_blue</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
     <!-- Main activity theme. -->
@@ -23,9 +24,18 @@
     </style>
 
     <!-- Style for forecast listview -->
-    <style name="ForecastListStyle">
+    <style name="TextMediumCondensed">
         <!-- Here it's a stub.  In screens of sufficient width, this style includes modifications
         for two-pane layout -->
+        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="TextLightCondensed">
+        <!-- Here it's a stub.  In screens of sufficient width, this style includes modifications
+        for two-pane layout -->
+        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
 </resources>

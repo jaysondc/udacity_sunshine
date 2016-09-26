@@ -13,11 +13,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/detail_date_friendly"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/black"
+        android:textSize="24sp"
         tools:text = "Today"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/detail_date"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/grey_700"
+        android:textSize="16sp"
         tools:text = "June 24"/>
 
     <LinearLayout
@@ -30,16 +36,22 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="left">
+            android:gravity="center">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_temp_high"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/black"
+                android:textSize="96sp"
                 tools:text = "21"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_temp_low"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/grey_700"
+                android:textSize="48sp"
                 tools:text = "8"/>
         </LinearLayout>
 
@@ -54,11 +66,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_icon"
-                tools:src="@drawable/ic_launcher"/>
+                tools:src="@drawable/art_clouds"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_description"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="@color/grey_700"
                 tools:text = "Clear"/>
         </LinearLayout>
 
@@ -68,16 +82,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/detail_humidity"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
+        android:textAppearance="?android:textAppearanceLarge"
         tools:text = "Humidity: 84%"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/detail_wind"
+        android:layout_marginBottom="4dp"
+        android:textAppearance="?android:textAppearanceLarge"
         tools:text = "Wind: 6 km/H NW"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/detail_pressure"
+        android:layout_marginBottom="4dp"
+        android:textAppearance="?android:textAppearanceLarge"
         tools:text = "Pressure: 1014 hPa"/>
 
 </LinearLayout>

@@ -18,7 +18,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight=".75"
             android:orientation="vertical"
             android:gravity="left"
             android:layout_gravity="top">
@@ -26,11 +26,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_date_friendly"
+                android:textColor="@color/black"
+                android:textSize="24sp"
                 tools:text = "Today"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_date"
+                android:textColor="@color/grey_700"
+                android:textSize="20sp"
                 tools:text = "June 24"/>
         </LinearLayout>
         <LinearLayout
@@ -43,12 +47,39 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_temp_high"
+                android:fontFamily="sans-serif-light"
+                android:textSize="96sp"
+                android:textColor="@color/black"
                 tools:text = "21"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_temp_low"
+                android:layout_marginLeft="4dp"
+                android:textColor="@color/grey_700"
+                android:textSize="48sp"
                 tools:text = "8"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/detail_humidity"
+                android:textColor="@color/black"
+                android:textAppearance="?android:textAppearanceLarge"
+                tools:text = "Humidity: 84%"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/detail_wind"
+                android:textColor="@color/black"
+                android:textAppearance="?android:textAppearanceLarge"
+                tools:text = "Wind: 6 km/H NW"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/detail_pressure"
+                android:textColor="@color/black"
+                android:textAppearance="?android:textAppearanceLarge"
+                tools:text = "Pressure: 1014 hPa"/>
         </LinearLayout>
 
         <LinearLayout
@@ -56,6 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:layout_gravity="top"
             android:orientation="vertical">
 
             <ImageView
@@ -67,25 +99,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/detail_description"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/grey_700"
+                android:textAppearance="?android:textAppearanceLarge"
                 tools:text = "Clear"/>
         </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/detail_humidity"
-        tools:text = "Humidity: 84%"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/detail_wind"
-        tools:text = "Wind: 6 km/H NW"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/detail_pressure"
-        tools:text = "Pressure: 1014 hPa"/>
+
 
 </LinearLayout>
