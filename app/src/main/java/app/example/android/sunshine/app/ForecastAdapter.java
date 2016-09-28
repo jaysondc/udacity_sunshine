@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.sunshine.app.R;
@@ -19,7 +20,7 @@ import app.example.android.sunshine.app.ui.ForecastFragment;
 
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
- * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
+ * from a {@link Cursor} to a {@link ListView}.
  */
 public class ForecastAdapter extends CursorAdapter {
 
@@ -62,7 +63,7 @@ public class ForecastAdapter extends CursorAdapter {
         return (position == 0 && mUseTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
     }
 
-    public void setUseTodayLayout(boolean useTodayLayout){
+    public void setUseTodayLayout(boolean useTodayLayout) {
         mUseTodayLayout = useTodayLayout;
     }
 
@@ -80,9 +81,9 @@ public class ForecastAdapter extends CursorAdapter {
         int viewType = getItemViewType(cursor.getPosition());
         int layoutID = -1;
 
-        if(viewType == VIEW_TYPE_TODAY){
+        if (viewType == VIEW_TYPE_TODAY) {
             layoutID = R.layout.list_item_forecast_today;
-        } else if(viewType == VIEW_TYPE_FUTURE_DAY){
+        } else if (viewType == VIEW_TYPE_FUTURE_DAY) {
             layoutID = R.layout.list_item_forecast;
         }
 
@@ -109,7 +110,7 @@ public class ForecastAdapter extends CursorAdapter {
         int weatherCondId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
         int viewType = getItemViewType(cursor.getPosition());
         int resWeatherIcon;
-        if(viewType == VIEW_TYPE_TODAY){
+        if (viewType == VIEW_TYPE_TODAY) {
             resWeatherIcon = Utility.getArtResourceForWeatherCondition(weatherCondId);
         } else {
             resWeatherIcon = Utility.getIconResourceForWeatherCondition(weatherCondId);
@@ -127,7 +128,12 @@ public class ForecastAdapter extends CursorAdapter {
                 Utility.isMetric(context));
 
         viewHolder.iconView.setImageResource(resWeatherIcon);
-        viewHolder.dateView.setText(Utility.getFriendlyDayString(context, date));
+        viewHolder.iconView.setContentDescription(forecast);
+        if (!mUseTodayLayout && cursor.getPosition() == 0) {
+            viewHolder.dateView.setText(context.getString(R.string.today));
+        } else {
+            viewHolder.dateView.setText(Utility.getFriendlyDayString(context, date));
+        }
         viewHolder.descriptionView.setText(forecast);
         viewHolder.highTempView.setText(high);
         viewHolder.lowTempView.setText(low);

@@ -199,6 +199,7 @@ public class DetailFragment extends android.support.v4.app.Fragment implements L
         // Icon
         int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
         mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+        mIconView.setContentDescription(data.getString(COL_WEATHER_DESC));
 
         // Description
         mDescriptionView.setText(data.getString(COL_WEATHER_DESC));
